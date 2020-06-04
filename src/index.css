@@ -15,7 +15,7 @@ body {
 
 .bg {
   position: absolute;
-  background: whitesmoke;
+  background: #5a5a5a;
 
   /* radial-gradient(
     at 50% 100%,
@@ -47,21 +47,6 @@ body {
 .loading-bar {
   height: 3px;
   background: white;
-}
-
-h1 {
-  position: absolute;
-  top: 150px;
-  left: 50%;
-  font-family: "Josefin Sans", sans-serif;
-  font-weight: 800;
-  font-size: 10em;
-  transform: translate3d(-50%, 0, 0);
-  margin: 0;
-  color: #cc7b32;
-  line-height: 0.9em;
-  letter-spacing: -5px;
-  text-align: center;
 }
 
 h1 > span {
@@ -108,22 +93,6 @@ span.header-left {
 @media only screen and (max-width: 600px) {
   a.bottom-left {
     display: none;
-  }
-}
-
-@media only screen and (max-width: 1000px) {
-  h1 {
-    transform: translate3d(-50%, 0, 0);
-    font-size: 8em;
-    letter-spacing: -5px;
-  }
-}
-
-@media only screen and (max-width: 500px) {
-  h1 {
-    transform: translate3d(-50%, 0%, 0);
-    font-size: 4em;
-    letter-spacing: -5px;
   }
 }
 

@@ -32,10 +32,41 @@ const Controls = (props) => {
 };
 
 const StyledDiv = styled.div`
-  opacity: ${(props) =>
-    props.id === props.hovered && props.hovered !== null ? 1 : 0};
-  transition: opacity 0.3s linear;
+  display: ${(props) =>
+    props.id === props.hovered && props.hovered !== null ? "block" : "none"};
+  opacity: 80%;
+  transition: opacity 2s linear;
   width: 500px;
+  border: 1px solid #b57373;
+  color: #b57373;
+  align-items: center;
+  text-align: center;
+  h1 {
+    color: inherit;
+    font-size: 1.2rem;
+  }
+  img {
+    max-width: 400px;
+    overflow: clip;
+    margin: 0px auto;
+  }
+`;
+
+const Backword = styled.div`
+  display: ${(props) =>
+    props.id === props.hovered && props.hovered !== null ? "none" : "block"};
+  opacity: 80%;
+  position: absolute;
+  transition: opacity 2s linear;
+  width: 100vw;
+  height: 100vh;
+  color: #b57373;
+  align-items: center;
+  text-align: center;
+  h1 {
+    color: inherit;
+    font-size: 2rem;
+  }
 `;
 
 function Model({ id, hovered, data, ...props }) {
@@ -60,16 +91,19 @@ function Model({ id, hovered, data, ...props }) {
   });
   useEffect(() => {
     const root = group.current;
-
     actions.current = {
       storkFly_B_: mixer.clipAction(model.animations[0], root),
     };
     return () => model.animations.forEach((clip) => mixer.uncacheClip(clip));
   });
-  useEffect(() => void actions.current.storkFly_B_.play(), []);
+  useEffect(() => void actions.current.storkFly_B_.play());
 
   return (
-    <group ref={group} {...props}>
+    <group
+      ref={group}
+      {...props}
+      onClick={(e) => window.open(`${data.url}`, "_blank")}
+    >
       <mesh
         castShadow
         receiveShadow
@@ -86,16 +120,22 @@ function Model({ id, hovered, data, ...props }) {
       </mesh>
       <HTML>
         <StyledDiv className="content" hovered={hovered} id={id}>
-          {data.title} <br />
-          ms
+          <h1>{data.title}</h1>
+          <img src={data.urlToImage} alt="" />
+          <p>{data.description}</p>
+          <p>{data.content}</p>
+          <p>written by {data.author}</p>
+          <p>{data.publishedAt}</p>
+          <p>{data.source.name}</p>
+          <h1>Click!</h1>
         </StyledDiv>
       </HTML>
     </group>
   );
 }
 
-function Models() {
-  const [springs, set] = useSprings(50, (index) => ({
+function Models({ cnt, news, align }) {
+  const [springs, set] = useSprings(cnt, (index) => ({
     from: {
       position: [
         Math.random() * 40 - 20,
@@ -104,8 +144,6 @@ function Models() {
       ],
     },
   }));
-
-  const [news, setNews] = useState(null);
   const [hovered, setHover] = useState(null);
 
   const hoveraction = (e, i) => {
@@ -115,30 +153,30 @@ function Models() {
   const alignment = () => {
     void set((index) => ({
       position: [
-        (index % 5) * 20 - 40,
-        -(Math.floor(index / 5) % 5) * 20 + 40,
+        (index % 5) * 10 - 20,
+        -(Math.floor(index / 5) % 5) * 10 + 20,
         Math.floor(index / 25) * 10 - 20,
       ],
       delay: 50, //index * 500
     }));
   };
-  useEffect(() => {
-    api((result) => {
-      setNews(result.articles);
-    });
-  }, []);
-  useEffect(() => {}, [news]);
+
+  align && alignment();
 
   return (
     news !== null &&
+    cnt &&
     news.map((data, i) => {
       return (
-        <a.group key={i} position={springs[i].position}>
+        <a.group
+          key={i}
+          onPointerOver={(e) => hoveraction(e, i)}
+          onPointerOut={(e) => hoveraction(e, i)}
+          position={springs[i].position}
+        >
           <Model
             key={i}
             id={i}
-            onPointerOver={(e) => hoveraction(e, i)}
-            onPointerOut={(e) => hoveraction(e, i)}
             onClick={alignment}
             hovered={hovered}
             data={data}
@@ -148,43 +186,57 @@ function Models() {
     })
   );
 }
-/* 
-function Loading() {
-  const [finished, set] = useState(false);
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    THREE.DefaultLoadingManager.onLoad = () => set(true);
-    THREE.DefaultLoadingManager.onProgress = (url, itemsLoaded, itemsTotal) =>
-      setWidth((itemsLoaded / itemsTotal) * 200);
-  }, []);
-
-  const props = useTransition(finished, null, {
-    from: { opacity: 1, width: 0 },
-    leave: { opacity: 0 },
-    update: { width },
-  });
-
-  return props.map(
-    ({ item: finished, key, props: { opacity, width } }) =>
-      !finished && (
-        <a.div className="loading" key={key} style={{ opacity }}>
-          <div className="loading-bar-container">
-            <a.div className="loading-bar" style={{ width }} />
-          </div>
-        </a.div>
-      )
-  );
-} */
 
 export default function Home() {
+  const [cnt, setcnt] = useState(0);
+  const [news, setNews] = useState(null);
+  const [total, setTotal] = useState(null);
+  const [align, setAlign] = useState(null);
+
+  useEffect(() => {
+    api((result) => {
+      setNews(result.articles);
+      setTotal(result.totalResults);
+      if (result.totalResults >= 100) {
+        setcnt(100);
+      } else {
+        setcnt(result.totalResults);
+      }
+    });
+  }, []);
   return (
     <>
       <div className="bg" />
+      <div
+        style={{
+          display: "inline",
+          position: "absolute",
+          width: "100vw",
+          height: "100vh",
+          top: "0vh",
+          left: "0vh",
+          fontSize: "8rem",
+          color: "#b57373",
+          opacity: "50%",
 
+          border: "5px solid white",
+        }}
+      >
+        <h1
+          style={{
+            position: "absolute",
+            top: "40%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          TOTAL <br />
+          {total}
+        </h1>
+      </div>
       <Canvas camera={{ position: [0, 0, 30] }} shadowMap>
         <ambientLight intensity={4} />
-        <pointLight intensity={2} position={[-10, -25, -10]} />
+        <pointLight intensity={1} position={[-10, -25, -10]} />
         <spotLight
           castShadow
           intensity={0.5}
@@ -195,7 +247,7 @@ export default function Home() {
         />
 
         <Suspense fallback={null}>
-          <Models />
+          <Models cnt={cnt} news={news} align={align} />
         </Suspense>
 
         <Controls
@@ -208,13 +260,20 @@ export default function Home() {
 
       <a
         href="https://github.com/drcmda/learnwithjason"
+        className="bottom-right"
+        children={`today total : ${total}`}
+      />
+      <a
+        href="https://github.com/drcmda/learnwithjason"
         className="top-left"
         children="Github"
+        onClick={() => setAlign(true)}
       />
       <a
         href="https://twitter.com/0xca0a"
         className="top-right"
         children="Twitter"
+        onClick={() => setAlign(false)}
       />
       <a
         href="https://github.com/drcmda/react-three-fiber"

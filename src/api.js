@@ -2,7 +2,10 @@ import { API } from "./config";
 import NewsAPI from "newsapi";
 const newsapi = new NewsAPI(API);
 let date = new Date();
-let today = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+let hour = date.getHours();
+let day = hour < 7 && hour >= 0 ? date.getDate() - 1 : date.getDate();
+console.log("day", day, hour);
+let today = `${date.getFullYear()}-${date.getMonth() + 1}-${day}`;
 
 export default async function api(callback) {
   try {
@@ -14,7 +17,7 @@ export default async function api(callback) {
       to: today,
       language: "en",
       sortBy: "relevancy",
-      pageSize: 50,
+      pageSize: 100,
     });
     console.log("hi", result);
     callback(result);
