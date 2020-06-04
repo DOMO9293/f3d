@@ -13,14 +13,17 @@ import {
   useLoader,
   extend,
 } from "react-three-fiber";
-import { useTransition, a } from "react-spring";
+import { useSprings, a } from "react-spring/three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import virus from "../virus5.gltf";
 import api from "../api";
+import { HTML } from "drei";
+import styled from "styled-components";
 
 extend({ OrbitControls });
+
 const Controls = (props) => {
   const { gl, camera } = useThree();
   const ref = useRef();
@@ -28,14 +31,21 @@ const Controls = (props) => {
   return <orbitControls ref={ref} args={[camera, gl.domElement]} {...props} />;
 };
 
-function Model(props) {
+const StyledDiv = styled.div`
+  opacity: ${(props) =>
+    props.id === props.hovered && props.hovered !== null ? 1 : 0};
+  transition: opacity 0.3s linear;
+  width: 500px;
+`;
+
+function Model({ id, hovered, data, ...props }) {
   const group = useRef();
+
   const model = useLoader(GLTFLoader, virus, (loader) => {
     const dracoLoader = new DRACOLoader();
     dracoLoader.decoderPath = "/draco-gltf/";
     loader.setDRACOLoader(dracoLoader);
   });
-
   const actions = useRef();
   const [mixer] = useState(() => new THREE.AnimationMixer());
   useFrame((state, delta) => {
@@ -74,40 +84,71 @@ function Model(props) {
           roughness={1}
         />
       </mesh>
+      <HTML>
+        <StyledDiv className="content" hovered={hovered} id={id}>
+          {data.title} <br />
+          ms
+        </StyledDiv>
+      </HTML>
     </group>
   );
 }
 
 function Models() {
-  const vir = useRef();
-  const [news, setNews] = useState(null);
-  const [cnt, setCnt] = useState(null);
-  const [hovered, setHover] = useState(false);
+  const [springs, set] = useSprings(50, (index) => ({
+    from: {
+      position: [
+        Math.random() * 40 - 20,
+        Math.random() * 40 - 20,
+        Math.random() * 40 - 20,
+      ],
+    },
+  }));
 
+  const [news, setNews] = useState(null);
+  const [hovered, setHover] = useState(null);
+
+  const hoveraction = (e, i) => {
+    //console.log(e.type);
+    e.type === "pointerover" ? setHover(i) : setHover(null);
+  };
+  const alignment = () => {
+    void set((index) => ({
+      position: [
+        (index % 5) * 20 - 40,
+        -(Math.floor(index / 5) % 5) * 20 + 40,
+        Math.floor(index / 25) * 10 - 20,
+      ],
+      delay: 50, //index * 500
+    }));
+  };
   useEffect(() => {
     api((result) => {
-      setCnt(result.totalResults);
       setNews(result.articles);
     });
   }, []);
+  useEffect(() => {}, [news]);
 
   return (
     news !== null &&
-    new Array(cnt).fill().map((_, i) => {
-      const x = Math.random() * 100 - 50;
-      const y = Math.random() * 100 - 50;
-      const z = Math.random() * 10 - 5;
+    news.map((data, i) => {
       return (
-        <Model
-          key={i}
-          position={[x, y, z]}
-          onPointerOver={(e) => console.log(e, i)}
-        />
+        <a.group key={i} position={springs[i].position}>
+          <Model
+            key={i}
+            id={i}
+            onPointerOver={(e) => hoveraction(e, i)}
+            onPointerOut={(e) => hoveraction(e, i)}
+            onClick={alignment}
+            hovered={hovered}
+            data={data}
+          />
+        </a.group>
       );
     })
   );
 }
-
+/* 
 function Loading() {
   const [finished, set] = useState(false);
   const [width, setWidth] = useState(0);
@@ -134,7 +175,7 @@ function Loading() {
         </a.div>
       )
   );
-}
+} */
 
 export default function Home() {
   return (
@@ -153,21 +194,18 @@ export default function Home() {
           shadow-mapSize-height={2048}
         />
 
-        {console.log("hi")}
-
         <Suspense fallback={null}>
           <Models />
         </Suspense>
 
         <Controls
-          enablePan={true}
+          enablePan={false}
           enableZoom={true}
           enableDamping
           dampingFactor={0.5}
         />
       </Canvas>
 
-      <Loading />
       <a
         href="https://github.com/drcmda/learnwithjason"
         className="top-left"

@@ -8,6 +8,8 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
+    "drei": "0.0.54",
+    "lerp": "^1.0.3",
     "newsapi": "^2.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -15,6 +17,7 @@
     "react-scripts": "3.4.1",
     "react-spring": "^8.0.27",
     "react-three-fiber": "^4.0.28",
+    "styled-components": "^5.1.1",
     "three": "^0.115.0"
   },
   "scripts": {

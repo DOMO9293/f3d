@@ -14,11 +14,11 @@ export default async function api(callback) {
       to: today,
       language: "en",
       sortBy: "relevancy",
-      pageSize: 100,
+      pageSize: 50,
     });
-    console.log(result);
+    console.log("hi", result);
     callback(result);
   } catch (e) {
-    console.log(e);
+    console.log("error!", e);
   }
 }
