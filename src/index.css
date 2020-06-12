@@ -10,12 +10,10 @@ canvas {
 }
 
 body {
-  background: #171717;
 }
 
 .bg {
   position: absolute;
-  background: #5a5a5a;
 
   /* radial-gradient(
     at 50% 100%,

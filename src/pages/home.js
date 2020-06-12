@@ -34,7 +34,7 @@ const Controls = (props) => {
 const StyledDiv = styled.div`
   display: ${(props) =>
     props.id === props.hovered && props.hovered !== null ? "block" : "none"};
-  opacity: 80%;
+  opacity: 70%;
   transition: opacity 2s linear;
   width: 500px;
   border: 1px solid #b57373;
@@ -215,22 +215,24 @@ export default function Home() {
           height: "100vh",
           top: "0vh",
           left: "0vh",
-          fontSize: "8rem",
-          color: "#b57373",
+          fontSize: "7rem",
+          color: "white",
           opacity: "50%",
-
-          border: "5px solid white",
+          padding: "10px",
         }}
       >
         <h1
           style={{
+            textAlign: "right",
+            width: "98vw",
+            marginRight: "10px",
             position: "absolute",
-            top: "40%",
+            top: "35%",
             left: "50%",
             transform: "translate(-50%, -50%)",
           }}
         >
-          TOTAL <br />
+          NEW CASES TODAY <br />
           {total}
         </h1>
       </div>
