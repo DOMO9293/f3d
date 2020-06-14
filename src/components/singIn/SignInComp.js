@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
 import CustomButton from "../global/CustomButton";
 import styled from "styled-components";
-import { signInWithGoogle } from "../firebase/firebase.utils";
-
-function Form() {
+import {
+  auth,
+  createUserProfileDocument,
+  signInWithGoogle,
+} from "../firebase/firebase.utils";
+function SignInComp() {
   const [state, setValue] = useState({ email: "", password: "" });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setValue({ email: "", password: "" });
+    const { email, password } = state;
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+
+      setValue({ email: "", password: "" });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handleChange = (e) => {
@@ -37,7 +47,11 @@ function Form() {
         <CustomButton type="submit" value="Submit Form">
           SignIn
         </CustomButton>
-        <CustomButton onClick={signInWithGoogle} value="Submit Form">
+        <CustomButton
+          type="button"
+          onClick={signInWithGoogle}
+          value="Submit Form"
+        >
           SignIn with google
         </CustomButton>
       </form>
@@ -45,7 +59,7 @@ function Form() {
   );
 }
 
-export default Form;
+export default SignInComp;
 
 const Container = styled.div`
   background-color: white;
