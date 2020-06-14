@@ -3,6 +3,7 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/SignIn";
 import Header from "./components/global/Header";
+import Scrap from "./pages/Scrap";
 import {
   auth,
   createUserProfileDocument,
@@ -34,8 +35,20 @@ export default function App() {
     <>
       <Header currentUser={currentUser} />
 
-      <Route path="/" exact={true} component={Home} />
-      <Route path="/scrap" exact={true} component={SignIn} />
+      <Route
+        path="/"
+        exact={true}
+        render={(props) => <Home {...props} currentUser={currentUser} />}
+      />
+      {currentUser && (
+        <Route
+          path="/scrap"
+          exact={true}
+          render={(props) => <Scrap {...props} currentUser={currentUser} />}
+        />
+      )}
+
+      <Route path="/signin" exact={true} component={SignIn} />
     </>
   );
 }

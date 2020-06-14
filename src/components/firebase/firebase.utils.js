@@ -36,6 +36,47 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
+export const AddNews = async (userAuth, urlsource) => {
+  if (!userAuth) return;
+
+  const { publishedAt } = urlsource;
+
+  // console.log("data", url, userAuth);
+
+  const scrapRef = firestore.doc(`users/${userAuth.id}/scrap/${publishedAt}`);
+  const snapShot = await scrapRef.get();
+
+  console.log("snapshot", snapShot);
+  if (!snapShot.exists) {
+    try {
+      await scrapRef.set(urlsource);
+    } catch (e) {
+      console.log("error", e.message);
+    }
+  }
+  return scrapRef;
+};
+
+export const GetList = async (userAuth) => {
+  if (!userAuth) return;
+
+  const listRef = firestore.collection(`users/${userAuth.id}/scrap`);
+
+  const list = [];
+
+  /*   listRef.get().then((qS) => {
+    qS.forEach((doc) => {
+      list.push(doc.data());
+    });
+  }); */
+
+  const snapshot = await listRef.get();
+
+  snapshot.forEach((d) => list.push(d.data()));
+  //console.log("coll", snapshot);
+  //console.log("snp", list);
+  return list;
+};
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();

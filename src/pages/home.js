@@ -21,6 +21,7 @@ import virus from "../virus5.gltf";
 import api from "../api";
 import { HTML } from "drei";
 import styled from "styled-components";
+import Modal from "../components/home/Modal";
 
 extend({ OrbitControls });
 
@@ -34,7 +35,7 @@ const Controls = (props) => {
 const StyledDiv = styled.div`
   display: ${(props) =>
     props.id === props.hovered && props.hovered !== null ? "block" : "none"};
-  opacity: 70%;
+  opacity: 90%;
   transition: opacity 2s linear;
   width: 500px;
   border: 1px solid #b57373;
@@ -49,23 +50,6 @@ const StyledDiv = styled.div`
     max-width: 400px;
     overflow: clip;
     margin: 0px auto;
-  }
-`;
-
-const Backword = styled.div`
-  display: ${(props) =>
-    props.id === props.hovered && props.hovered !== null ? "none" : "block"};
-  opacity: 80%;
-  position: absolute;
-  transition: opacity 2s linear;
-  width: 100vw;
-  height: 100vh;
-  color: #b57373;
-  align-items: center;
-  text-align: center;
-  h1 {
-    color: inherit;
-    font-size: 2rem;
   }
 `;
 
@@ -97,13 +81,9 @@ function Model({ id, hovered, data, ...props }) {
     return () => model.animations.forEach((clip) => mixer.uncacheClip(clip));
   });
   useEffect(() => void actions.current.storkFly_B_.play());
-
+  /*  onClick={(e) => window.open(`${data.url}`, "_blank")} */
   return (
-    <group
-      ref={group}
-      {...props}
-      onClick={(e) => window.open(`${data.url}`, "_blank")}
-    >
+    <group ref={group} {...props}>
       <mesh
         castShadow
         receiveShadow
@@ -134,7 +114,7 @@ function Model({ id, hovered, data, ...props }) {
   );
 }
 
-function Models({ cnt, news, align }) {
+function Models({ cnt, news, align, openModal }) {
   const [springs, set] = useSprings(cnt, (index) => ({
     from: {
       position: [
@@ -147,9 +127,9 @@ function Models({ cnt, news, align }) {
   const [hovered, setHover] = useState(null);
 
   const hoveraction = (e, i) => {
-    //console.log(e.type);
     e.type === "pointerover" ? setHover(i) : setHover(null);
   };
+
   const alignment = () => {
     void set((index) => ({
       position: [
@@ -172,6 +152,9 @@ function Models({ cnt, news, align }) {
           key={i}
           onPointerOver={(e) => hoveraction(e, i)}
           onPointerOut={(e) => hoveraction(e, i)}
+          onClick={(e) => {
+            openModal(e, i, data);
+          }}
           position={springs[i].position}
         >
           <Model
@@ -187,11 +170,23 @@ function Models({ cnt, news, align }) {
   );
 }
 
-export default function Home() {
+export default function Home({ currentUser }) {
   const [cnt, setcnt] = useState(0);
   const [news, setNews] = useState(null);
   const [total, setTotal] = useState(null);
   const [align, setAlign] = useState(null);
+
+  const [modalVisible, setModalVisible] = useState(null);
+  const [currentUrl, setCurrentUrl] = useState(null);
+
+  const openModal = (e, i, d) => {
+    setModalVisible(i);
+    setCurrentUrl(d);
+  };
+  const closeModal = () => {
+    setModalVisible(null);
+    setCurrentUrl(null);
+  };
 
   useEffect(() => {
     api((result) => {
@@ -249,7 +244,7 @@ export default function Home() {
         />
 
         <Suspense fallback={null}>
-          <Models cnt={cnt} news={news} align={align} />
+          <Models cnt={cnt} news={news} align={align} openModal={openModal} />
         </Suspense>
 
         <Controls
@@ -282,6 +277,18 @@ export default function Home() {
         className="bottom-left"
         children="+ react-three-fiber"
       />
+      {modalVisible !== null && (
+        <Modal
+          visible={modalVisible}
+          closable={true}
+          maskClosable={true}
+          onClose={closeModal}
+          url={currentUrl}
+          currentUser={currentUser}
+        >
+          {modalVisible}
+        </Modal>
+      )}
     </>
   );
 }
