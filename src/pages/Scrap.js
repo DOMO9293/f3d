@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GetList } from "../components/firebase/firebase.utils";
+import { selectScrapsCount } from "../redux/scrap/scrap.selectors";
 
 function Scrap({ currentUser }) {
   const [list, setList] = useState(null);
@@ -25,5 +26,9 @@ function Scrap({ currentUser }) {
     )
   );
 }
+
+const mapStateToProps = (state) => ({
+  itemcount: selectScrapsCount(state),
+});
 
 export default Scrap;

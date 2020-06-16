@@ -18,8 +18,8 @@ import { setCurrentUser } from "./redux/user/user.actions";
 
 function App(props) {
   const { setCurrentUser } = props;
-  const [currentUser, setCurrentUsertemp] = useState(null);
-
+  const { currentUser } = props;
+  console.log("hiprops", props.currentUser);
   useEffect(() => {
     const userChange = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
@@ -30,14 +30,9 @@ function App(props) {
             id: sS.id,
             ...sS.data(),
           });
-          setCurrentUsertemp({
-            id: sS.id,
-            ...sS.data(),
-          });
         });
       } else {
         setCurrentUser(userAuth);
-        setCurrentUsertemp(userAuth);
       }
     });
 
@@ -70,8 +65,8 @@ function App(props) {
   );
 }
 
-const mapStateToProps = ({ user }) => ({
-  currentUser: user.currentUser,
+const mapStateToProps = ({ user: { currentUser } }) => ({
+  currentUser,
 });
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)),
