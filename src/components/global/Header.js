@@ -1,8 +1,9 @@
 import React from "react";
 import { auth } from "../firebase/firebase.utils";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-export default function Header({ currentUser }) {
+function Header({ currentUser }) {
   return (
     <div>
       {currentUser ? (
@@ -20,3 +21,9 @@ export default function Header({ currentUser }) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  currentUser: state.user.currentUser,
+});
+
+export default connect(mapStateToProps)(Header);

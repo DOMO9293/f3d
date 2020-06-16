@@ -275,7 +275,7 @@ export default function Home({ currentUser }) {
       <a
         href="https://github.com/drcmda/react-three-fiber"
         className="bottom-left"
-        children="+ react-three-fiber"
+        children="MY NEWS"
       />
       {modalVisible !== null && (
         <Modal

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import {
+  Route,
+  BrowserRouter as Router,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/SignIn";
 import Header from "./components/global/Header";
@@ -8,9 +13,12 @@ import {
   auth,
   createUserProfileDocument,
 } from "./components/firebase/firebase.utils";
+import { connect } from "react-redux";
+import { setCurrentUser } from "./redux/user/user.actions";
 
-export default function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+function App(props) {
+  const { setCurrentUser } = props;
+  const [currentUser, setCurrentUsertemp] = useState(null);
 
   useEffect(() => {
     const userChange = auth.onAuthStateChanged(async (userAuth) => {
@@ -22,9 +30,14 @@ export default function App() {
             id: sS.id,
             ...sS.data(),
           });
+          setCurrentUsertemp({
+            id: sS.id,
+            ...sS.data(),
+          });
         });
       } else {
         setCurrentUser(userAuth);
+        setCurrentUsertemp(userAuth);
       }
     });
 
@@ -33,7 +46,7 @@ export default function App() {
 
   return (
     <>
-      <Header currentUser={currentUser} />
+      <Header />
 
       <Route
         path="/"
@@ -48,7 +61,20 @@ export default function App() {
         />
       )}
 
-      <Route path="/signin" exact={true} component={SignIn} />
+      <Route
+        path="/signin"
+        exact={true}
+        render={() => (props.currentUser ? <Redirect to="/" /> : <SignIn />)}
+      />
     </>
   );
 }
+
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
