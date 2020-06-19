@@ -2,7 +2,7 @@
 
  Grocery Shopping List App
 
-![Imgur](https://i.imgur.com/qP63N42.gifv)
+![Imgur](https://i.imgur.com/qP63N42.gif)
 ## Summary
 
 Pantry inventory management application
