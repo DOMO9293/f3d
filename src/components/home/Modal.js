@@ -1,9 +1,8 @@
 import React from "react";
 import { AddNews } from "../firebase/firebase.utils";
-import { Link } from "react-router-dom";
-
+import CustomButton from "../global/CustomButton";
 import styled from "styled-components";
-
+import { withRouter } from "react-router-dom";
 function Modal({
   className,
   onClose,
@@ -13,6 +12,7 @@ function Modal({
   children,
   url,
   currentUser,
+  history,
 }) {
   const onMaskClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -21,6 +21,12 @@ function Modal({
   };
 
   const close = (e) => {
+    if (onClose) {
+      onClose(e);
+    }
+  };
+  const addnews = async (e, currentUser, url) => {
+    await AddNews(currentUser, url);
     if (onClose) {
       onClose(e);
     }
@@ -35,34 +41,32 @@ function Modal({
         visible={visible}
       >
         <ModalInner tabIndex="0" className="modal-inner">
-          {children}
+          <Text>{children}</Text>
           {closable && (
-            <>
-              <button className="modal-close" onClick={close}>
+            <Text>
+              <CloseButton className="modal-close" onClick={close}>
                 x
-              </button>
-              <button
+              </CloseButton>
+              <CustomButton
                 className="modal-close"
                 onClick={(e) => window.open(url.url, "_blank")}
               >
-                go to new page
-              </button>
+                go to news page
+              </CustomButton>
               {currentUser ? (
-                <div
-                  style={{ color: "black" }}
-                  onClick={async () => {
-                    const scrapRef = await AddNews(currentUser, url);
-                    console.log("imdone");
+                <CustomButton
+                  onClick={(e) => {
+                    addnews(e, currentUser, url);
                   }}
                 >
                   scrap this news
-                </div>
+                </CustomButton>
               ) : (
-                <Link style={{ color: "black" }} to="/scrap">
+                <CustomButton onClick={() => history.push("/signin")}>
                   Sign in for scrap this news
-                </Link>
+                </CustomButton>
               )}
-            </>
+            </Text>
           )}
         </ModalInner>
       </ModalWrapper>
@@ -70,7 +74,24 @@ function Modal({
   );
 }
 
-export default Modal;
+export default withRouter(Modal);
+
+const Text = styled.p`
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+  font-weight: bold;
+`;
+const CloseButton = styled.button`
+  position: absolute;
+  background-color: blue;
+  border-radius: 30px;
+  padding: 10px;
+  border: none;
+  color: white;
+  top: 4%;
+  left: 90%;
+`;
 
 const ModalWrapper = styled.div`
   box-sizing: border-box;
@@ -109,4 +130,6 @@ const ModalInner = styled.div`
   transform: translateY(-50%);
   margin: 0 auto;
   padding: 40px 20px;
+  justify-content: center;
+  align-items: center;
 `;

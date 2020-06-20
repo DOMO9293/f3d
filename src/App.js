@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/SignIn";
-import Header from "./components/global/Header";
+//import Header from "./components/global/Header";
 import Scrap from "./pages/Scrap";
 import {
   auth,
@@ -15,11 +15,11 @@ import {
 } from "./components/firebase/firebase.utils";
 import { connect } from "react-redux";
 import { setCurrentUser } from "./redux/user/user.actions";
+import Header from "./components/global/Header";
 
 function App(props) {
   const { setCurrentUser } = props;
   const { currentUser } = props;
-  console.log("hiprops", props.currentUser);
   useEffect(() => {
     const userChange = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
@@ -42,24 +42,28 @@ function App(props) {
   return (
     <>
       <Header />
-
       <Route
         path="/"
         exact={true}
         render={(props) => <Home {...props} currentUser={currentUser} />}
       />
-      {currentUser && (
-        <Route
-          path="/scrap"
-          exact={true}
-          render={(props) => <Scrap {...props} currentUser={currentUser} />}
-        />
-      )}
+
+      <Route
+        path="/scrap"
+        exact={true}
+        render={(props) =>
+          currentUser ? (
+            <Scrap {...props} currentUser={currentUser} />
+          ) : (
+            <Redirect to="/" />
+          )
+        }
+      />
 
       <Route
         path="/signin"
         exact={true}
-        render={() => (props.currentUser ? <Redirect to="/" /> : <SignIn />)}
+        render={() => (currentUser ? <Redirect to="/" /> : <SignIn />)}
       />
     </>
   );

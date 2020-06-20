@@ -46,10 +46,29 @@ export const AddNews = async (userAuth, urlsource) => {
   const scrapRef = firestore.doc(`users/${userAuth.id}/scrap/${publishedAt}`);
   const snapShot = await scrapRef.get();
 
-  console.log("snapshot", snapShot);
   if (!snapShot.exists) {
     try {
       await scrapRef.set(urlsource);
+      console.log(snapShot);
+    } catch (e) {
+      console.log("error", e.message);
+    }
+  }
+  return scrapRef;
+};
+
+export const clearNews = async (userAuth, urlsource) => {
+  console.log(userAuth, urlsource);
+  if (!userAuth) return;
+
+  const scrapRef = firestore.doc(`users/${userAuth.id}/scrap/${urlsource}`);
+  const snapShot = await scrapRef.get();
+
+  if (snapShot.exists) {
+    console.log("snapshotexist");
+    try {
+      await scrapRef.delete();
+      console.log(snapShot);
     } catch (e) {
       console.log("error", e.message);
     }

@@ -1,4 +1,4 @@
-import { ScrapActionTypes } from "./scrap.types";
+import ScrapActionTypes from "./scrap.types";
 
 export const addItem = (item) => ({
   type: ScrapActionTypes.ADD_ITEM,

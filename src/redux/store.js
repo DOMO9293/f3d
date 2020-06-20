@@ -5,8 +5,6 @@ import { persistStore } from "redux-persist";
 
 const middlewares = [logger];
 
-const store = createStore(rootReducer, applyMiddleware(...middlewares));
-
-const persistor = persistStore(store);
-
-export default { store, persistor };
+export const store = createStore(rootReducer, applyMiddleware(...middlewares));
+//persist 없으면 export default 로 바로 export 해준다
+export const persistor = persistStore(store);

@@ -14,7 +14,7 @@ body {
 
 .bg {
   position: absolute;
-
+  background-color: blue;
   /* radial-gradient(
     at 50% 100%,
     #262729 0%,

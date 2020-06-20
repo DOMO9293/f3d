@@ -1,4 +1,4 @@
-import { ScrapActionTypes } from "./scrap.types";
+import ScrapActionTypes from "./scrap.types";
 
 const INITIAL_STATE = {
   scraps: null,
@@ -15,7 +15,7 @@ const scrapReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         scraps: state.scraps.filter(
-          (scrapItem) => scrapItem.id !== action.payload.id
+          (scrapItem) => scrapItem.publishedAt !== action.payload.publishedAt
         ),
       };
     default:

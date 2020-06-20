@@ -1,11 +1,5 @@
 import * as THREE from "three";
-import React, {
-  Suspense,
-  useRef,
-  useState,
-  useEffect,
-  createElement,
-} from "react";
+import React, { Suspense, useRef, useState, useEffect } from "react";
 import {
   Canvas,
   useThree,
@@ -22,6 +16,7 @@ import api from "../api";
 import { HTML } from "drei";
 import styled from "styled-components";
 import Modal from "../components/home/Modal";
+import Header from "../components/global/Header";
 
 extend({ OrbitControls });
 
@@ -170,7 +165,7 @@ function Models({ cnt, news, align, openModal }) {
   );
 }
 
-export default function Home({ currentUser }) {
+function Home({ currentUser, history }) {
   const [cnt, setcnt] = useState(0);
   const [news, setNews] = useState(null);
   const [total, setTotal] = useState(null);
@@ -273,10 +268,13 @@ export default function Home({ currentUser }) {
         onClick={() => setAlign(false)}
       />
       <a
-        href="https://github.com/drcmda/react-three-fiber"
         className="bottom-left"
         children="MY NEWS"
+        onClick={() => {
+          history.push("/scrap");
+        }}
       />
+      <Header />
       {modalVisible !== null && (
         <Modal
           visible={modalVisible}
@@ -286,9 +284,11 @@ export default function Home({ currentUser }) {
           url={currentUrl}
           currentUser={currentUser}
         >
-          {modalVisible}
+          {currentUrl.title}
         </Modal>
       )}
     </>
   );
 }
+
+export default Home;
