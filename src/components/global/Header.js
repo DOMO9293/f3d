@@ -12,7 +12,7 @@ function Header({ currentUser, history }) {
       ) : (
         <Element onClick={() => history.push("/signin")}>Sign In</Element>
       )}
-      <Element>HOME</Element>
+      <Element onClick={() => history.push("/")}>HOME</Element>
     </Container>
   );
 }
