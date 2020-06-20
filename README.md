@@ -2,7 +2,7 @@
 
  Applications report daily only race-related issues
 
-![Imgur](https://imgur.com/LAAT8Q7.gif)
+![Imgur](https://imgur.com/uJqSrWz.gif)
 ## Summary
 
 * Web application with 3D Data Visualization
